@@ -64,7 +64,7 @@ var initialData = {
       "likeCounter": [],
       "type": "statusUpdate",
       "contents": {
-        "author": 4,
+        "author": new ObjectID("000000000000000000000004"),
         "postDate": 1458231460117,
         "location": "Philadelphia, PA",
         "contents": "You can now edit and delete status updates!\nGo ahead and click the caret in the corner of the post."
