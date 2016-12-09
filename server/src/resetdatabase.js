@@ -33,32 +33,45 @@ var initialData = {
   // system.
   "feedItems": {
     "1": {
-  "_id": new ObjectID("000000000000000000000001"),
-  "likeCounter": [
-    new ObjectID("000000000000000000000002"), new ObjectID("000000000000000000000003")
-  ],
-  "type": "statusUpdate",
-  "contents": {
-    "author": new ObjectID("000000000000000000000001"),
-    "postDate": 1453668480000,
-    "location": "Austin, TX",
-    "contents": "ugh."
-  },
-  "comments": [
-    {
-      "author": new ObjectID("000000000000000000000002"),
-      "contents": "hope everything is ok!",
-      "postDate": 1453690800000,
-      "likeCounter": []
+      "_id": new ObjectID("000000000000000000000001"),
+      // A list of users that liked the post. Here, "Someone Else" and "Another Person"
+      // liked this particular post.
+      "likeCounter": [
+        new ObjectID("000000000000000000000002"), new ObjectID("000000000000000000000003")
+      ],
+      // The type and contents of this feed item. This item happens to be a status
+      // update.
+      "type": "statusUpdate",
+      "contents": {
+        // ID of the user that posted the status update.
+        "author": new ObjectID("000000000000000000000001"),
+        // 01/24/16 3:48PM EST, converted to Unix Time
+        // (# of milliseconds since Jan 1 1970 UTC)
+        // https://en.wikipedia.org/wiki/Unix_time
+        "postDate": 1453668480000,
+        "location": "Austin, TX",
+        "contents": "ugh."
+      },
+      // List of comments on the post
+      "comments": [
+        {
+          // The author of the comment.
+          "author": new ObjectID("000000000000000000000002"),
+          // The contents of the comment.
+          "contents": "hope everything is ok!",
+          // The date the comment was posted.
+          // 01/24/16 22:00 EST
+          "postDate": 1453690800000,
+          "likeCounter": []
+        },
+        {
+          "author": new ObjectID("000000000000000000000003"),
+          "contents": "sending hugs your way",
+          "postDate": 1453690800000,
+          "likeCounter": []
+        }
+      ]
     },
-    {
-      "author": new ObjectID("000000000000000000000003"),
-      "contents": "sending hugs your way",
-      "postDate": 1453690800000,
-      "likeCounter": []
-    }
-  ]
-},
     "2": {
       "_id": new ObjectID("000000000000000000000002"),
       "likeCounter": [],
@@ -93,6 +106,7 @@ var initialData = {
     }
   }
 };
+
 /**
  * Resets a collection.
  */
@@ -109,6 +123,12 @@ function resetCollection(db, name, cb) {
   });
 }
 
+/**
+ * Adds any desired indexes to the database.
+ */
+function addIndexes(db, cb) {
+  db.collection('feedItems').createIndex({ "contents.contents": "text" }, null, cb);
+}
 /**
  * Reset the MongoDB database.
  * @param db The database connection.
@@ -129,7 +149,7 @@ function resetDatabase(db, cb) {
       // Use myself as a callback.
       resetCollection(db, collection, processNextCollection);
     } else {
-      cb();
+      addIndexes(db, cb);
     }
   }
 
